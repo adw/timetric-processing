@@ -1,0 +1,7 @@
+A quick example of how to pull data out of Timetric, a web service for
+publishing, analysing and sharing time-series statistics, load it into
+Processing, and turn it into some graphics!
+
+Timetric: http://timetric.com/
+Timetric API documentation: http://timetric.com/help/httpapi/
+Processing: http://processing.org/
