@@ -13,22 +13,26 @@ interface Plottable2D {
 class Series {
   Calendar[] times;
   float[] values;
+  String id;
 
+  // constructors  
   Series() {
     // default constructor
   }
-  
-  String idToHistoryURL(String series_id) {
-    return("http://timetric.com/series/"+series_id+"/csv/");
+
+  Series(String series_id) {
+    setID(series_id);
+    loadData();
+  } 
+
+  // setters
+  void setID(String series_id) {
+    id = series_id;
   }
   
-  Series(String series_id) {
-    loadData(series_id);
-  } 
- 
-  void loadData(String series_id) {
+  void loadData() {
     // Load in the history of a series from its CSV endpoint
-    String URL = idToHistoryURL(series_id);
+    String URL = getHistoryURL();
     try {
       String[] data = loadStrings(URL);
       int len = data.length;
@@ -47,6 +51,19 @@ class Series {
     } catch (NullPointerException e) {
       println("Series failed to load:" + URL);
     }
+  }
+
+  // getters
+  String getID() {
+    return id;
+  }
+  
+  String getURL() {
+    return "http://timetric.com/series/"+id+"/";
+  }
+  
+  String getHistoryURL() {
+    return("http://timetric.com/series/"+id+"/csv/");
   }
 
   float[] getValues() {
