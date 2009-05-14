@@ -1,10 +1,11 @@
-import java.util.Calendar;
 /**
  * How to get data from Timetric and display it using Processing.
  *
  * @author Andrew Walkingshaw <andrew@inkling-software.co.uk>
  * @version 0.5
  */
+
+import java.util.Calendar;
 
 interface Plottable2D {
   void plot(int[] centre, int[] inner_box, int[] outer_box);
