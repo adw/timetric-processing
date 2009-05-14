@@ -1,4 +1,10 @@
 import java.util.Calendar;
+/**
+ * How to get data from Timetric and display it using Processing.
+ *
+ * @author Andrew Walkingshaw <andrew@inkling-software.co.uk>
+ * @version 0.5
+ */
 
 interface Plottable2D {
   void plot(int[] centre, int[] inner_box, int[] outer_box);
@@ -12,11 +18,17 @@ class Series {
     // default constructor
   }
   
-  Series(String URL) {
-    loadData(URL);
+  String idToHistoryURL(String series_id) {
+    return("http://timetric.com/series/"+series_id+"/csv/");
+  }
+  
+  Series(String series_id) {
+    loadData(series_id);
   } 
  
-  void loadData(String URL) {
+  void loadData(String series_id) {
+    // Load in the history of a series from its CSV endpoint
+    String URL = idToHistoryURL(series_id);
     try {
       String[] data = loadStrings(URL);
       int len = data.length;
@@ -26,6 +38,7 @@ class Series {
         String[] fragments = data[x].split(",");
         long dst = 1000L * int(fragments[0]);
         Calendar c = Calendar.getInstance();
+        // all times on Timetric are in UTC.
         c.setTimeInMillis(dst);
         times[x] = c;
         float ev = float(fragments[1]);
@@ -46,10 +59,11 @@ class Series {
 }
 
 class WeeklyRadialSeries extends Series implements Plottable2D {
+  // Collapse a series onto a radial plot, folded week-by-week
   int ellipse_size = 4;
   
-  WeeklyRadialSeries(String URL) {
-    super(URL);
+  WeeklyRadialSeries(String series_id) {
+    super(series_id);
   }
   
   void plot(int[] centre, int[] inner_box, int[] outer_box) {
@@ -84,10 +98,11 @@ class WeeklyRadialSeries extends Series implements Plottable2D {
 }
 
 class HourlyRadialSeries extends Series implements Plottable2D {
+  // Collapse a series onto a radial plot, folded day-by-day
   int ellipse_size = 4;
   
-  HourlyRadialSeries(String URL) {
-    super(URL);
+  HourlyRadialSeries(String series_id) {
+    super(series_id);
   }
   
   void plot(int[] centre, int[] inner_box, int[] outer_box) {
@@ -133,19 +148,17 @@ void setup() {
   fill(127, 0, 0);
   int[] radial = {radius, radius};
   int[] bounding = {count_radius, count_radius};
-  HourlyRadialSeries data = new HourlyRadialSeries("http://timetric.com/series/tmUuYRsgTPCF_2qu4NrL_Q/csv/");
+  // the ID here is http://timetric.com/series/SERIES_ID/ 
+  HourlyRadialSeries data = new HourlyRadialSeries("tmUuYRsgTPCF_2qu4NrL_Q");
   int[] wh1 = {width/4, height/4};
   data.plot(wh1, radial, bounding);
   int[] wh2 = {3*width/4, 3*height/4};
-  HourlyRadialSeries new_data = new HourlyRadialSeries("http://timetric.com/series/u1G90heAQp2DmRgCD46bLQ/csv/");
+  HourlyRadialSeries new_data = new HourlyRadialSeries("u1G90heAQp2DmRgCD46bLQ");
   new_data.plot(wh2, radial, bounding);
-  WeeklyRadialSeries w_data = new WeeklyRadialSeries("http://timetric.com/series/tmUuYRsgTPCF_2qu4NrL_Q/csv/");
+  WeeklyRadialSeries w_data = new WeeklyRadialSeries("tmUuYRsgTPCF_2qu4NrL_Q");
   int[] wh3 = {3*width/4, height/4};
   w_data.plot(wh3, radial, bounding);
-  WeeklyRadialSeries new_w_data = new WeeklyRadialSeries("http://timetric.com/series/u1G90heAQp2DmRgCD46bLQ/csv/");
+  WeeklyRadialSeries new_w_data = new WeeklyRadialSeries("u1G90heAQp2DmRgCD46bLQ");
   int[] wh4 = {width/4, 3*height/4};
   new_w_data.plot(wh4, radial, bounding);
 }
-
-
-
